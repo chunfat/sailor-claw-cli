@@ -1,0 +1,23 @@
+{
+  "name": "sailor-claw-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "start": "node dist/cli.js",
+    "dev": "npx ts-node cli.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "eslint": "^9.14.0",
+    "globals": "^15.12.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.5.0"
+  }
+}
