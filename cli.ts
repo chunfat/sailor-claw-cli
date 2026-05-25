@@ -1,57 +1,87 @@
-import fs from "fs";
 import path from "path";
+import { OpenClawService } from "./src/agent-runtime/open-claw-service.js";
+import { WorkspaceService } from "./src/workspace-service.js";
 
 const args = process.argv.slice(2);
 const command = args[0];
 const workspaceName = args[1];
 
 const workspaceRoot = path.resolve(process.cwd(), ".workspaces");
+const workspaceService = new WorkspaceService(workspaceRoot);
+const openClawService = new OpenClawService(workspaceService);
 
 function printUsage(): void {
   console.log("Usage: sailor-claw-cli init [name]");
+  console.log("       sailor-claw-cli list");
+  console.log("       sailor-claw-cli start [workspace]");
   console.log("\nExample:");
   console.log("  sailor-claw-cli init my-workspace");
+  console.log("  sailor-claw-cli list");
+  console.log("  sailor-claw-cli start my-workspace");
 }
 
-function initWorkspace(name: string): void {
-  const targetPath = path.join(workspaceRoot, name);
+function listWorkspaces(): void {
+  const workspaces = workspaceService.listWorkspaces();
 
-  if (!name) {
-    console.error("Error: Missing workspace name.");
+  if (workspaces.length === 0) {
+    console.log(`No workspaces found under ${workspaceRoot}`);
+    return;
+  }
+
+  console.log("Workspaces:");
+  for (const workspace of workspaces) {
+    console.log(`- ${workspace}`);
+  }
+}
+
+async function main(): Promise<void> {
+  if (!command) {
     printUsage();
-    process.exit(1);
+    process.exit(0);
   }
 
-  if (fs.existsSync(targetPath)) {
-    console.error(`Workspace already exists: ${targetPath}`);
-    process.exit(1);
-  }
+  switch (command) {
+    case "init": {
+      if (!workspaceName) {
+        throw new Error("Please provide a workspace name.");
+      }
 
-  fs.mkdirSync(targetPath, { recursive: true });
-  fs.writeFileSync(
-    path.join(targetPath, "README.md"),
-    `# ${name}\n\nThis workspace was created by sailor-claw-cli.`
-  );
+      const targetPath = workspaceService.createWorkspace(workspaceName);
+      console.log(`Created workspace: ${targetPath}`);
+      break;
+    }
+    case "list":
+      listWorkspaces();
+      break;
+    case "start": {
+      if (!workspaceName) {
+        throw new Error("Please provide a workspace name.");
+      }
 
-  console.log(`Created workspace: ${targetPath}`);
-}
-
-if (!command) {
-  printUsage();
-  process.exit(0);
-}
-
-switch (command) {
-  case "init":
-    if (!workspaceName) {
-      console.error("Error: Please provide a workspace name.");
+      const result = await openClawService.startWorkspace(workspaceName, {
+        onProgress: (message) => {
+          console.log(`Starting workspace: ${message}`);
+        },
+      });
+      console.log(`Workspace: ${workspaceName}`);
+      console.log(`Container: ${result.containerName}`);
+      console.log(`Container ID: ${result.containerId}`);
+      console.log(`Gateway URL: http://localhost:${result.hostGatewayPort}`);
+      console.log(`OPENCLAW_GATEWAY_TOKEN: ${result.gatewayToken}`);
+      break;
+    }
+    default:
+      console.error(`Unknown command: ${command}`);
       printUsage();
       process.exit(1);
-    }
-    initWorkspace(workspaceName);
-    break;
-  default:
-    console.error(`Unknown command: ${command}`);
-    printUsage();
-    process.exit(1);
+  }
 }
+
+main().catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : "Unknown error.";
+  console.error(`Error: ${message}`);
+  if (command === "init" || command === "start") {
+    printUsage();
+  }
+  process.exit(1);
+});

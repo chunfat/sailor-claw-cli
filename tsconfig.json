@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["cli.ts"]
+  "include": ["cli.ts", "src/**/*.ts"]
 }

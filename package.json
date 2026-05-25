@@ -8,7 +8,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "start": "node dist/cli.js",
-    "dev": "npx ts-node cli.ts"
+    "dev": "npm run build && node dist/cli.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
