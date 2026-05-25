@@ -5,6 +5,7 @@ import { WorkspaceService } from "./src/workspace-service.js";
 const args = process.argv.slice(2);
 const command = args[0];
 const workspaceName = args[1];
+const telegramUserId = args[2];
 
 const workspaceRoot = path.resolve(process.cwd(), ".workspaces");
 const workspaceService = new WorkspaceService(workspaceRoot);
@@ -14,10 +15,16 @@ function printUsage(): void {
   console.log("Usage: sailor-claw-cli init [name]");
   console.log("       sailor-claw-cli list");
   console.log("       sailor-claw-cli start [workspace]");
+  console.log(
+    "       sailor-claw-cli set-telegram-allow-from-owner [workspace] [telegram-user-id]",
+  );
   console.log("\nExample:");
   console.log("  sailor-claw-cli init my-workspace");
   console.log("  sailor-claw-cli list");
   console.log("  sailor-claw-cli start my-workspace");
+  console.log(
+    "  sailor-claw-cli set-telegram-allow-from-owner my-workspace 123456789",
+  );
 }
 
 function listWorkspaces(): void {
@@ -70,6 +77,23 @@ async function main(): Promise<void> {
       console.log(`OPENCLAW_GATEWAY_TOKEN: ${result.gatewayToken}`);
       break;
     }
+    case "set-telegram-allow-from-owner": {
+      if (!workspaceName) {
+        throw new Error("Please provide a workspace name.");
+      }
+
+      if (!telegramUserId) {
+        throw new Error("Please provide a Telegram user ID.");
+      }
+
+      workspaceService.setTelegramAllowFrom(workspaceName, telegramUserId);
+      console.log(`Workspace: ${workspaceName}`);
+      console.log(`channels.telegram.allowFrom: ["${telegramUserId}"]`);
+      console.log(
+        `commands.ownerAllowFrom: ["telegram:${telegramUserId}"]`,
+      );
+      break;
+    }
     default:
       console.error(`Unknown command: ${command}`);
       printUsage();
@@ -80,7 +104,11 @@ async function main(): Promise<void> {
 main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : "Unknown error.";
   console.error(`Error: ${message}`);
-  if (command === "init" || command === "start") {
+  if (
+    command === "init" ||
+    command === "start" ||
+    command === "set-telegram-allow-from-owner"
+  ) {
     printUsage();
   }
   process.exit(1);

@@ -19,6 +19,14 @@ interface OpenClawConfig {
       allowedOrigins?: string[];
     };
   };
+  channels?: {
+    telegram?: {
+      allowFrom?: string[];
+    };
+  };
+  commands?: {
+    ownerAllowFrom?: string[];
+  };
 }
 
 interface DockerGatewayConfigUpdate {
@@ -104,6 +112,29 @@ export class WorkspaceService {
     }
 
     return token;
+  }
+
+  setTelegramAllowFrom(name: string, telegramUserId: string): void {
+    const normalizedTelegramUserId = telegramUserId.trim();
+
+    if (!/^\d+$/.test(normalizedTelegramUserId)) {
+      throw new Error(
+        `Telegram user ID must be a non-empty numeric string: ${telegramUserId}`,
+      );
+    }
+
+    const config = this.readOpenClawConfig(name);
+
+    config.channels ??= {};
+    config.channels.telegram ??= {};
+    config.channels.telegram.allowFrom = [normalizedTelegramUserId];
+
+    config.commands ??= {};
+    config.commands.ownerAllowFrom = [
+      `telegram:${normalizedTelegramUserId}`,
+    ];
+
+    this.writeOpenClawConfigFile(this.getOpenClawConfigPath(name), config);
   }
 
   ensureDockerGatewayConfig(

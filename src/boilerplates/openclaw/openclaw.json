@@ -84,7 +84,7 @@
   "channels": {
     "telegram": {
       "enabled": true,
-      "allowFrom": ["5016077957"],
+      "allowFrom": [],
       "groups": {
         "*": {
           "requireMention": true
@@ -132,7 +132,7 @@
     "lastTouchedAt": "2026-05-24T14:45:04.858Z"
   },
   "commands": {
-    "ownerAllowFrom": ["telegram:5016077957"]
+    "ownerAllowFrom": []
   },
   "messages": {}
 }
