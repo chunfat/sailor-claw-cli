@@ -1,6 +1,14 @@
 # sailor-claw-cli
 
-A minimal TypeScript CLI for managing workspace creation.
+A small TypeScript CLI for provisioning and deploying persistent agent workspaces with Docker.
+
+This project is a proof of concept built around a simple model:
+
+- Each user has one personal agent.
+- Each agent has one persistent workspace.
+- That workspace stores the agent's memory, preferences, and desired behavior.
+
+The CLI handles creating those workspaces, bootstrapping their configuration, and starting isolated Dockerized runtimes for them, using **OpenClaw** as the demo implementation.
 
 ## Environment setup
 
