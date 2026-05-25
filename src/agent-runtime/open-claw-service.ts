@@ -111,6 +111,13 @@ export class OpenClawService {
       );
     }
 
+    if (process.env.OPENROUTER_API_KEY) {
+      envArgs.push(
+        "-e",
+        `OPENROUTER_API_KEY=${process.env.OPENROUTER_API_KEY}`,
+      );
+    }
+
     const dockerArgs = [
       "run",
       "-d",
@@ -249,5 +256,4 @@ export class OpenClawService {
       }
     }
   }
-
 }

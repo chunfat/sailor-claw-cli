@@ -3,12 +3,12 @@
     "defaults": {
       "workspace": "/home/node/.openclaw/workspace",
       "models": {
-        "minimax/MiniMax-M2.7": {
-          "alias": "Minimax"
+        "openrouter/auto": {
+          "alias": "OpenRouter"
         }
       },
       "model": {
-        "primary": "minimax/MiniMax-M2.7"
+        "primary": "openrouter/auto"
       }
     }
   },
@@ -55,9 +55,6 @@
   },
   "plugins": {
     "entries": {
-      "minimax": {
-        "enabled": true
-      },
       "telegram": {
         "enabled": true
       },
@@ -74,34 +71,12 @@
   },
   "models": {
     "mode": "merge",
-    "providers": {
-      "minimax": {
-        "baseUrl": "https://api.minimax.io/anthropic",
-        "models": [
-          {
-            "id": "MiniMax-M2.7",
-            "name": "MiniMax M2.7",
-            "reasoning": true,
-            "input": ["text"],
-            "cost": {
-              "input": 0.3,
-              "output": 1.2,
-              "cacheRead": 0.06,
-              "cacheWrite": 0.375
-            },
-            "contextWindow": 204800,
-            "maxTokens": 131072
-          }
-        ],
-        "api": "anthropic-messages",
-        "authHeader": true
-      }
-    }
+    "providers": {}
   },
   "auth": {
     "profiles": {
-      "minimax:global": {
-        "provider": "minimax",
+      "openrouter:default": {
+        "provider": "openrouter",
         "mode": "api_key"
       }
     }

@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { spawnSync } from "child_process";
+import * as childProcess from "child_process";
 import fs from "fs";
 import path from "path";
 
@@ -209,9 +209,9 @@ export class WorkspaceService {
       return;
     }
 
-    const result = spawnSync(
+    const result = this.spawnSync(
       "xattr",
-      ["-dr", "com.apple.provenance", targetPath],
+      ["-d", "-r", "-s", "com.apple.provenance", targetPath],
       { encoding: "utf8" },
     );
 
@@ -235,5 +235,13 @@ export class WorkspaceService {
       left.length === right.length &&
       left.every((value, index) => value === right[index])
     );
+  }
+
+  protected spawnSync(
+    command: string,
+    args: readonly string[],
+    options: childProcess.SpawnSyncOptionsWithStringEncoding,
+  ): childProcess.SpawnSyncReturns<string> {
+    return childProcess.spawnSync(command, args, options);
   }
 }
