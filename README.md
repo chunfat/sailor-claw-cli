@@ -8,7 +8,7 @@ This project is a proof of concept built around a simple model:
 - Each agent has one persistent workspace.
 - That workspace stores the agent's memory, preferences, and desired behavior.
 
-The CLI handles creating those workspaces, bootstrapping their configuration, and starting isolated Dockerized runtimes for them, using **OpenClaw** as the demo implementation.
+The CLI handles creating those workspaces, bootstrapping their configuration, and starting isolated Dockerized runtimes for them, using **OpenClaw** as the demo implementation and **Telegram** as the demo chat interface.
 
 ## Environment setup
 
@@ -100,6 +100,8 @@ npm start -- start my-workspace
 ```
 
 This starts a detached `alpine/openclaw` container, prints the local gateway URL, and prints the `OPENCLAW_GATEWAY_TOKEN` loaded from the workspace `openclaw.json`.
+
+The exposed local port and that gateway token can be used together to access the OpenClaw control UI for the workspace.
 
 Configure Telegram access for a workspace:
 
